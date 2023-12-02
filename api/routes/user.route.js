@@ -1,14 +1,15 @@
 import express from 'express';
-import { followUnfollowUser, login, logout, signup, updateUser } from '../controllers/user.controller.js';
+import { followUnfollowUser, getUserProfile, login, logout, signup, updateUser } from '../controllers/user.controller.js';
 import { verifyToken } from '../utils/verifyUser.js';
 
 
 const router = express.Router();
 
+router.get('/profile/:username', getUserProfile);
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/logout', logout);
-router.post('/follow/:id', verifyToken, followUnfollowUser);
+router.post('/follow/:id', verifyToken, followUnfollowUser); // Toggle state (follow/unfollow)
 router.post('/update/:id', verifyToken, updateUser);
 
 export default router;

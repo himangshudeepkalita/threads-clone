@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDB from './db/connectDB.js';
 import cookieParser from 'cookie-parser';
 import userRoute from './routes/user.route.js';
+import postRoute from './routes/post.route.js';
 
 dotenv.config();
 
@@ -12,12 +13,14 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
+// Middlewares
 app.use(express.json()); // To parse JSON data in the req.body
 app.use(express.urlencoded({ extended: true })); // To parse form data in the req.body
 app.use(cookieParser());
 
 // Routes
 app.use('/api/users', userRoute);
+app.use('/api/posts', postRoute);
 
 app.listen(port, () => {
     console.log(`Server is running at ${port}`);
