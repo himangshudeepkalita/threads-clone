@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { errorHandler } from '../utils/error.js'
+import { v2 as cloudinary } from "cloudinary";
 
 export const signup = async (req, res, next) => {
   try {
@@ -27,7 +28,14 @@ export const signup = async (req, res, next) => {
     res
      .cookie('access_token', token, { httpOnly: true })
      .status(201)
-     .json("User created successfully!!!");
+     .json({
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      username: newUser.username,
+      bio: newUser.bio,
+      profilePic: newUser.profilePic
+     });
   } catch (error) {
     next(error);
   }
@@ -48,7 +56,14 @@ export const login = async (req, res, next) => {
         res
          .cookie('access_token', token, { httpOnly: true })
          .status(200)
-         .json(rest);
+         .json({
+          _id: validUser._id,
+          name: validUser.name,
+          email: validUser.email,
+          username: validUser.username,
+          bio: validUser.bio,
+          profilePic: validUser.profilePic
+         });
     } catch (error) {
         next(error);
     }
@@ -96,7 +111,9 @@ export const followUnfollowUser = async (req, res, next) => {
 }
 
 export const updateUser = async (req, res, next) => {
-  const { name, email, username, password, profilePic, bio } = req.body;
+  const { name, email, username, password, bio } = req.body;
+  let { profilePic } = req.body;
+
   const userId = req.user.id;
   try {
     let user = await User.findById(userId);
@@ -109,6 +126,15 @@ export const updateUser = async (req, res, next) => {
       user.password = hashedPassword;
     }
 
+    if(profilePic) {
+      if(user.profilePic) {
+        await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+      }
+
+      const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+      profilePic = uploadedResponse.secure_url;
+    }
+
     user.name = name || user.name;
     user.email = email || user.email;
     user.username = username || user.username;
@@ -117,7 +143,10 @@ export const updateUser = async (req, res, next) => {
 
     user = await user.save();
 
-    res.status(200).json({ message: 'Profile updated successfully!!!', user });
+    // password should be null in response
+    user.password = null;
+
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }

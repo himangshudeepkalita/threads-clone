@@ -10,6 +10,6 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/logout', logout);
 router.post('/follow/:id', verifyToken, followUnfollowUser); // Toggle state (follow/unfollow)
-router.post('/update/:id', verifyToken, updateUser);
+router.put('/update/:id', verifyToken, updateUser);
 
 export default router;

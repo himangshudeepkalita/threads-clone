@@ -4,6 +4,7 @@ import connectDB from './db/connectDB.js';
 import cookieParser from 'cookie-parser';
 import userRoute from './routes/user.route.js';
 import postRoute from './routes/post.route.js';
+import {v2 as cloudinary} from "cloudinary";
 
 dotenv.config();
 
@@ -12,6 +13,12 @@ connectDB();
 const app = express();
 
 const port = process.env.PORT || 5000;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 // Middlewares
 app.use(express.json()); // To parse JSON data in the req.body
