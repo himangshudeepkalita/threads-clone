@@ -48,7 +48,7 @@ export const getPost = async (req, res, next) => {
             return next(errorHandler(404, 'Post not found!!!'));
         }
 
-        res.status(200).json({ post });
+        res.status(200).json(post);
     } catch (error) {
         next(error);
     }
