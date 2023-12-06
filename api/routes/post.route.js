@@ -8,7 +8,7 @@ router.get('/feed', verifyToken, getFeedPosts);
 router.get('/:id', getPost);
 router.post('/create',verifyToken, createPost);
 router.delete('/:id', verifyToken, deletePost);
-router.post('/like/:id', verifyToken, likeUnlikePost);
-router.post('/reply/:id', verifyToken, replyToPost);
+router.put('/like/:id', verifyToken, likeUnlikePost);
+router.put('/reply/:id', verifyToken, replyToPost);
 
 export default router;
