@@ -3,7 +3,7 @@ import UserHeader from "../components/UserHeader";
 import { useParams } from "react-router-dom";
 import useShowToast from "../hooks/useShowToast";
 import { Flex, Spinner } from "@chakra-ui/react";
-// import Post from "../components/Post";
+import Post from "../components/Post";
 // import useGetUserProfile from "../hooks/useGetUserProfile";
 import { useRecoilState } from "recoil";
 // import postsAtom from "../atoms/postsAtom";
