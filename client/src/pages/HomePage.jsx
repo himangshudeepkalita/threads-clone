@@ -15,7 +15,12 @@ const HomePage = () => {
 			setLoading(true);
 			setPosts([]);
 			try {
-				const res = await fetch("/api/posts/feed");
+				const userToken = localStorage.getItem('access_token');
+				const res = await fetch("/api/posts/feed", {
+					headers: {
+						Authorization: `Bearer ${userToken}`, // Replace with the actual user token
+					  },
+				});
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");

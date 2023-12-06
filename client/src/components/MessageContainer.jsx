@@ -15,42 +15,89 @@ const MessageContainer = () => {
 	const [messages, setMessages] = useState([]);
 	const currentUser = useRecoilValue(userAtom);
 	const { socket } = useSocket();
+
 	const setConversations = useSetRecoilState(conversationsAtom);
 	const messageEndRef = useRef(null);
 
 	useEffect(() => {
-		socket.on("newMessage", (message) => {
-			if (selectedConversation._id === message.conversationId) {
-				setMessages((prev) => [...prev, message]);
-			}
-
-			// make a sound if the window is not focused
-			if (!document.hasFocus()) {
-				const sound = new Audio(messageSound);
-				sound.play();
-			}
-
-			setConversations((prev) => {
-				const updatedConversations = prev.map((conversation) => {
-					if (conversation._id === message.conversationId) {
-						return {
-							...conversation,
-							lastMessage: {
-								text: message.text,
-								sender: message.sender,
-							},
-						};
-					}
-					return conversation;
-				});
-				return updatedConversations;
+		if (!socket) {
+		  return; // Return early if socket is not defined
+		}
+	  
+		const handleNewMessage = (message) => {
+		  if (selectedConversation._id === message.conversationId) {
+			setMessages((prev) => [...prev, message]);
+		  }
+	  
+		  // make a sound if the window is not focused
+		  if (!document.hasFocus()) {
+			const sound = new Audio(messageSound);
+			sound.play();
+		  }
+	  
+		  setConversations((prev) => {
+			const updatedConversations = prev.map((conversation) => {
+			  if (conversation._id === message.conversationId) {
+				return {
+				  ...conversation,
+				  lastMessage: {
+					text: message.text,
+					sender: message.sender,
+				  },
+				};
+			  }
+			  return conversation;
 			});
-		});
+			return updatedConversations;
+		  });
+		};
+	  
+		socket.on("newMessage", handleNewMessage);
+	  
+		return () => {
+		  if (socket) {
+			socket.off("newMessage", handleNewMessage);
+		  }
+		};
+	  }, [socket, selectedConversation, setConversations, setMessages]);
+	// useEffect(() => {
+	// 	socket.on("newMessage", (message) => {
+	// 		if (selectedConversation._id === message.conversationId) {
+	// 			setMessages((prev) => [...prev, message]);
+	// 		}
 
-		return () => socket.off("newMessage");
-	}, [socket, selectedConversation, setConversations]);
+	// 		// make a sound if the window is not focused
+	// 		if (!document.hasFocus()) {
+	// 			const sound = new Audio(messageSound);
+	// 			sound.play();
+	// 		}
+
+	// 		setConversations((prev) => {
+	// 			const updatedConversations = prev.map((conversation) => {
+	// 				if (conversation._id === message.conversationId) {
+	// 					return {
+	// 						...conversation,
+	// 						lastMessage: {
+	// 							text: message.text,
+	// 							sender: message.sender,
+	// 						},
+	// 					};
+	// 				}
+	// 				return conversation;
+	// 			});
+	// 			return updatedConversations;
+	// 		});
+	// 	});
+
+	// 	return () => socket.off("newMessage");
+	// }, [socket, selectedConversation, setConversations]);
 
 	useEffect(() => {
+
+		if (!socket) {
+			return; // Return early if socket is not defined
+		  }
+
 		const lastMessageIsFromOtherUser = messages.length && messages[messages.length - 1].sender !== currentUser._id;
 		if (lastMessageIsFromOtherUser) {
 			socket.emit("markMessagesAsSeen", {

@@ -6,7 +6,9 @@ import userAtom from "../atoms/userAtom";
 const SocketContext = createContext();
 
 export const useSocket = () => {
-	return useContext(SocketContext);
+	const socket = useContext(SocketContext);
+	// return useContext(SocketContext);
+	return { socket };
 };
 
 export const SocketContextProvider = ({ children }) => {
