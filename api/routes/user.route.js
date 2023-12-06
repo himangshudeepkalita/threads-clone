@@ -5,7 +5,7 @@ import { verifyToken } from '../utils/verifyUser.js';
 
 const router = express.Router();
 
-router.get('/profile/:username', getUserProfile);
+router.get('/profile/:query', getUserProfile);
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/logout', logout);

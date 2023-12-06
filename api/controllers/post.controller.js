@@ -145,7 +145,7 @@ export const getFeedPosts = async (req, res, next) => {
        const feedPosts = await Post.find({postedBy:{$in:following}}).sort({createdAt: -1});
     //    console.log("Feed Posts:", feedPosts);
 
-       res.status(200).json({feedPosts});
+       res.status(200).json(feedPosts);
     } catch (error) {
         next(error);
     }
